@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  loginurl:'https://testnode.propelapps.com/EBS/20D/login'
 };

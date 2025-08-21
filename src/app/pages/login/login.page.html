@@ -1,0 +1,35 @@
+<ion-content [fullscreen]="true">
+  <ion-title size="large">Mobile Supply Chain Platform</ion-title>
+  <ion-list>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+      <ion-item>
+        <ion-icon name="people"></ion-icon>
+        <ion-input
+          placeholder="Username"
+          formControlName="username"
+        ></ion-input>
+      </ion-item>
+       <ion-note
+    color="danger"
+    *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors"
+  >UserName is Required  </ion-note>
+      <ion-item>
+        <ion-icon name="lock-closed"></ion-icon>
+        <ion-input
+          placeholder="Password"
+          type="password"
+          formControlName="password"
+        ></ion-input>
+      </ion-item>
+             <ion-note
+    color="danger"
+    *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors"
+  >Password  is Required  </ion-note>
+  <ion-row class="ion-justify-content-center">
+  <ion-col size="auto">
+    <ion-button type="submit">Login</ion-button>
+  </ion-col>
+</ion-row>
+    </form>
+  </ion-list>
+</ion-content>
