@@ -9,7 +9,12 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage),
   },
+
   {
+    path: 'organization',
+    loadComponent: () => import('./pages/organization/organization.page').then( m => m.OrganizationPage)
+  },
+    {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

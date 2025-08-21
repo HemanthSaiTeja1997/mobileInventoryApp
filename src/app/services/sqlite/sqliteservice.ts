@@ -13,7 +13,7 @@ export class Sqliteservice {
   private db: SQLiteDBConnection | null = null;
     private loginUsers = new BehaviorSubject<any>([]);
   loginusers$ = this.loginUsers.asObservable();
-  async createLoginTable(databaseName: string, tableName: string, metaData: Metadata[]) {
+  async createDatabaseWithTable(databaseName: string, tableName: string, metaData: Metadata[],primaryKey: string = '') {
     try {
       await this.sqlite.checkConnectionsConsistency();
       const isConnected = await this.sqlite.isConnection(databaseName, false);
@@ -25,7 +25,7 @@ export class Sqliteservice {
         await this.db.open();
       }
       const columeNameWithType = metaData.map((data) => `${data.name} ${data.type}`).join(' ,');
-      const schema = `CREATE TABLE  IF NOT EXISTS ${tableName} (${columeNameWithType});`
+      const schema = `CREATE TABLE  IF NOT EXISTS ${tableName} (${columeNameWithType}${primaryKey});`
       await this.db.execute(schema);
     } catch (err) {
       console.error("DB initialization error:", err);
@@ -45,7 +45,7 @@ export class Sqliteservice {
       return `(${values})`;
     }).join(", ");
     const query = `INSERT INTO ${tableName} (${columns} ) VALUES ${valuesList}`;
-    const result = await this.db?.run(query);
+     await this.db?.run(query);
     await this.loadUsers(tableName);
     return true;
   }
@@ -54,6 +54,35 @@ export class Sqliteservice {
     const users = result?.values || [];
     this.loginUsers.next(users);
     
+  }
+
+  async createOrganizationTable(databaseName:string,tableName:string,csvData:any[][]){
+try {
+  const columns=csvData[0];
+  const rowValues= csvData.slice(1);
+  const primaryKey:string[]=[];
+  const columnWithoutSuffix= columns.map(col=>{
+    if(col.endsWith('_PK')){
+      const colWithoutSuffix = col.replace('_PK','');
+      primaryKey.push(colWithoutSuffix);
+      return colWithoutSuffix;
+    }
+    return col;
+  });
+  const metaData= columnWithoutSuffix.map(name=>({
+    name,
+    type:'TEXT'
+  }));
+
+  const primaryKeys= primaryKey.length > 0 ? ` , PRIMARY KEY (${primaryKey.join(' ,')})` : '';
+
+  await this.createDatabaseWithTable(databaseName,tableName,metaData,primaryKeys);
+  
+
+} catch (error) {
+   console.error("Error initializing table from CSV:", error);
+
+}
   }
 
 }

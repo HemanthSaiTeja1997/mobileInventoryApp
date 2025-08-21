@@ -10,6 +10,8 @@ import { Toastservice } from 'src/app/services/toast/toastservice';
 import { Alertservice } from 'src/app/services/alertservice/alertservice';
 import { loginRespone } from 'src/app/interfaces/loginrespone.interface';
 import { Sqliteservice } from 'src/app/services/sqlite/sqliteservice';
+import { NavController } from '@ionic/angular';
+import { Progressbar } from 'src/app/services/progressbar/progressbar';
 
 @Component({
   selector: 'app-login',
@@ -20,9 +22,9 @@ import { Sqliteservice } from 'src/app/services/sqlite/sqliteservice';
 })
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
-  loginActiveUsers:any;
-  defaultOrgId! :number;
-  constructor(private fb: FormBuilder,private sqlite:Sqliteservice, private apiservice: Apiservice, private toastService: Toastservice,private alertMessage:Alertservice) {
+  loginActiveUsers: any;
+  defaultOrgId!: number;
+  constructor(private fb: FormBuilder, private navCltr: NavController,private nprogress:Progressbar, private sqlite: Sqliteservice, private apiservice: Apiservice, private toastService: Toastservice, private alertMessage: Alertservice) {
     this.loginForm = this.fb.group({
       username: ['Manideep J', Validators.required],
       password: ['Propel@123', Validators.required]
@@ -41,25 +43,30 @@ export class LoginPage implements OnInit {
       this.toastService.presentToast('top', 'danger', 'Please fill all required fields');
       return;
     }
+    this.nprogress.progressBar("Loading...",3000,"circular")
     this.apiservice.apiRequest<loginRespone>("POST", environment.loginurl, this.loginForm.value).subscribe({
-      next: async(data:loginRespone) => {
-        if(data?.data[0]?.STATUS === '0'){
-        await  this.alertMessage.presentAlert(data?.data[0]?.ERROR);
-        }else{
-          await this.sqlite.createLoginTable("loginDatabase","loginUser",data?.metadata);
-          await this.sqlite.registerLoginUsers("loginUser",data?.data);
+      next: async (data: loginRespone) => {
+        this.nprogress.dismiss();
+        
+        if (data?.data[0]?.STATUS === '0') {
+          await this.alertMessage.presentAlert(data?.data[0]?.ERROR);
+        } else {
+          await this.sqlite.createDatabaseWithTable("loginDatabase", "loginUser", data?.metadata);
+          await this.sqlite.registerLoginUsers("loginUser", data?.data);
           await this.sqlite.loginusers$.subscribe({
-            next:(res)=>{
-this.loginActiveUsers=res.filter((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID != null && item.DEFAULT_ORG_ID !== "");
-this.defaultOrgId = res.find((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID !== null && item.DEFAULT_ORG_ID !== "")?.DEFAULT_ORG_ID;
-console.log("loginUsers",this.defaultOrgId);
+            next: (res) => {
+              this.loginActiveUsers = res.filter((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID != null && item.DEFAULT_ORG_ID !== "");
+              this.defaultOrgId = res.find((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID !== null && item.DEFAULT_ORG_ID !== "")?.DEFAULT_ORG_ID;
+              console.log("loginUsers", this.defaultOrgId);
+              this.navCltr.navigateForward(['/organization',this.defaultOrgId])
             }
           })
-
-
         }
 
-      }
+      },
+      error: async (err) => {
+      this.toastService.presentToast('top', 'danger', 'Login failed. Try again.');
+    }
     })
 
   }
