@@ -2,9 +2,12 @@
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { OrganizationPage } from "src/app/pages/organization/organization.page";
+
 export const environment = {
   production: false,
-  loginurl:'https://testnode.propelapps.com/EBS/20D/login'
+  loginurl:'https://testnode.propelapps.com/EBS/20D/login',
+  Organizationurl:'https://testnode.propelapps.com/EBS/23A/getInventoryOrganizationsTable'
 };
 
 /*

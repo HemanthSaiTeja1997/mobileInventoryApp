@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent,IonSearchbar, IonHeader, IonTitle, IonToolbar,IonLabel ,IonCheckbox,IonList,IonItem,IonInput} from '@ionic/angular/standalone';
+import { Sqliteservice } from 'src/app/services/sqlite/sqliteservice';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-organization',
@@ -11,10 +13,13 @@ import { IonContent,IonSearchbar, IonHeader, IonTitle, IonToolbar,IonLabel ,IonC
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, IonSearchbar, CommonModule,IonLabel, FormsModule, IonInput,IonCheckbox,IonList,IonItem]
 })
 export class OrganizationPage implements OnInit {
-
-  constructor() { }
+defaultOrgId!:number;
+  constructor(private sqlservice:Sqliteservice,private activeRoute:ActivatedRoute) { }
 
   ngOnInit() {
+    this.defaultOrgId= this.activeRoute.snapshot.params['id'];
+    console.log(">>>>>>",this.defaultOrgId);
+    
   }
 
 }

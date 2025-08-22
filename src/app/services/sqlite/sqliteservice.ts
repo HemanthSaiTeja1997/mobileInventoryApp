@@ -1,4 +1,3 @@
-import { ReturnStatement } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { CapacitorSQLite, SQLiteDBConnection, SQLiteConnection } from '@capacitor-community/sqlite';
 import { BehaviorSubject } from 'rxjs';
@@ -13,6 +12,8 @@ export class Sqliteservice {
   private db: SQLiteDBConnection | null = null;
     private loginUsers = new BehaviorSubject<any>([]);
   loginusers$ = this.loginUsers.asObservable();
+      private userOrganization = new BehaviorSubject<any>([]);
+  userOrganizations$ = this.userOrganization.asObservable();
   async createDatabaseWithTable(databaseName: string, tableName: string, metaData: Metadata[],primaryKey: string = '') {
     try {
       await this.sqlite.checkConnectionsConsistency();
@@ -46,14 +47,13 @@ export class Sqliteservice {
     }).join(", ");
     const query = `INSERT INTO ${tableName} (${columns} ) VALUES ${valuesList}`;
      await this.db?.run(query);
-    await this.loadUsers(tableName);
+   const users= await this.selectAllFromTable(tableName);
+   this.loginUsers.next(users);
     return true;
   }
-    async loadUsers(tableName:string) {
+    async selectAllFromTable(tableName:string) {
     const result = await this.db?.query(`SELECT * FROM ${tableName}`);
-    const users = result?.values || [];
-    this.loginUsers.next(users);
-    
+    return result?.values || [];    
   }
 
   async createOrganizationTable(databaseName:string,tableName:string,csvData:any[][]){
@@ -77,7 +77,14 @@ try {
   const primaryKeys= primaryKey.length > 0 ? ` , PRIMARY KEY (${primaryKey.join(' ,')})` : '';
 
   await this.createDatabaseWithTable(databaseName,tableName,metaData,primaryKeys);
-  
+  const valueString = rowValues
+  .map(row => `(${row.map(() => '?').join(',')})`)
+  .join(',');
+  const flatValues = rowValues.reduce((acc, val) => acc.concat(val), []);
+    const insertquery = `INSERT INTO ${tableName} (${columnWithoutSuffix.join(',')} ) VALUES ${valueString}`;
+     await this.db?.run(insertquery,flatValues);
+     const organizations= await this.selectAllFromTable(tableName);
+     this.userOrganization.next(organizations);
 
 } catch (error) {
    console.error("Error initializing table from CSV:", error);
