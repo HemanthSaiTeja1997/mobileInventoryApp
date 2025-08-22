@@ -27,3 +27,16 @@ export interface Data {
   RESPONSIBILITY_ID: string
   RESP_APPLICATION_ID: string
 }
+
+export interface Organization {
+  BusinessUnitId: string;
+  BusinessUnitName: string;
+  DefaultDestSubInventory: string | null;
+  InventoryOrgCode: string;
+  InventoryOrgId: string;
+  InventoryOrgName: string;
+  IsWMSEnabled: string;
+  LastUpdateDate: string;
+  MasterOrganizationId: string;
+  SiteType: string | null;
+}

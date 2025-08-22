@@ -11,13 +11,17 @@
     </ion-toolbar>
   </ion-header>
     <ion-toolbar>
-    <ion-searchbar></ion-searchbar>
+    <ion-searchbar [(ngModel)]="searchOrganization"></ion-searchbar>
     </ion-toolbar>
-    <ion-list [inset]="true">
-    <ion-item>
-      <ion-checkbox slot="start" aria-label="Toggle task completion"></ion-checkbox>
-      <ion-label value="HO1"><h2>HO1</h2>
-    <p>Houston_Inventory</p></ion-label>
-    </ion-item>
-  </ion-list>
+   <ion-list [inset]="true">
+  <ion-item *ngFor="let org of activeOrganizations | orgsearch:searchOrganization">
+    <ion-checkbox slot="start" [checked]="selectedOrgCode === org.InventoryOrgCode" (ionChange)="onCheckboxChange(org.InventoryOrgCode)"></ion-checkbox>
+    <ion-label>
+      <h2>{{ org.InventoryOrgCode }}</h2>
+      <p>{{ org.InventoryOrgName }}</p>
+    </ion-label>
+  </ion-item>
+</ion-list>
+
+   <ion-button expand="block" (click)="submitSelection()">Submit</ion-button>
 </ion-content>
