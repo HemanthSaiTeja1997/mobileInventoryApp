@@ -14,7 +14,7 @@
     <ion-searchbar [(ngModel)]="searchOrganization"></ion-searchbar>
     </ion-toolbar>
    <ion-list [inset]="true">
-  <ion-item *ngFor="let org of activeOrganizations | orgsearch:searchOrganization">
+  <ion-item *ngFor="let org of activeOrganizations | orgsearch: searchOrganization">
     <ion-checkbox slot="start" [checked]="selectedOrgCode === org.InventoryOrgCode" (ionChange)="onCheckboxChange(org.InventoryOrgCode)"></ion-checkbox>
     <ion-label>
       <h2>{{ org.InventoryOrgCode }}</h2>
@@ -23,5 +23,5 @@
   </ion-item>
 </ion-list>
 
-   <ion-button expand="block" (click)="submitSelection()">Submit</ion-button>
 </ion-content>
+<ion-button expand="block" [disabled]="!selectedOrgCode" (click)="submitSelection()" >Submit</ion-button>

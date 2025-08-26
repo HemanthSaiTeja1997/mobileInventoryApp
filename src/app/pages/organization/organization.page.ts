@@ -8,6 +8,7 @@ import { Apiservice } from 'src/app/services/apiservice/apiservice';
 import { environment } from 'src/environments/environment';
 import { Organization } from 'src/app/interfaces/loginrespone.interface';
 import { OrgsearchPipe } from 'src/app/pipes/orgsearch-pipe';
+import { ORGANIZATION_CONSTANTS } from 'src/app/utils/constants';
 
 @Component({
   selector: 'app-organization',
@@ -17,39 +18,21 @@ import { OrgsearchPipe } from 'src/app/pipes/orgsearch-pipe';
   imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonSearchbar, CommonModule, IonLabel, FormsModule, IonCheckbox, IonList, IonItem, OrgsearchPipe, IonButton]
 })
 export class OrganizationPage implements OnInit {
-  defaultOrgId!: number;
   searchOrganization: string = '';
   activeOrganizations: Organization[] = [];
   selectedOrgCode: string | null = null;
-  constructor(private sqlservice: Sqliteservice, private activeRoute: ActivatedRoute, private apiservice: Apiservice) { }
+  constructor(private sqlservice: Sqliteservice) { }
 
-  ngOnInit() {
-    this.defaultOrgId = this.activeRoute.snapshot.params['id'];
-    console.log(">>>>>>", this.defaultOrgId);
-    this.apiservice.apiRequest('GET', `${environment.Organizationurl}/${this.defaultOrgId}`).subscribe({
-      next: (res) => {
-        const respones = res as any[][];
-        console.log("inside organization", respones);
-        if (respones && Array.isArray(respones) && respones.length > 0 && typeof respones[0] === 'object') {
-
-          this.sqlservice.createOrganizationTable("organizationDB", "organizations", respones);
-          this.sqlservice.userOrganizations$.subscribe({
-            next: (res) => {
-              this.activeOrganizations = res;
-              console.log("activeORG", this.activeOrganizations);
-
-            }
-          })
-        }
-
-      }
-    })  }
-
-
-     onCheckboxChange(code: string) {
-    this.selectedOrgCode = code; 
+  async ngOnInit() {
+    this.activeOrganizations = await this.sqlservice.selectAllFromTable(ORGANIZATION_CONSTANTS.TABLE_NAME);
+    console.log("activeORG", this.activeOrganizations);
   }
-    submitSelection() {
+  onCheckboxChange(code: string) {
+    this.selectedOrgCode = code;
+    console.log("selected>>>", this.selectedOrgCode);
+
+  }
+  submitSelection() {
     if (this.selectedOrgCode) {
       console.log("Selected Organization Code:", this.selectedOrgCode);
     } else {

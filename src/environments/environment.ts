@@ -6,8 +6,7 @@ import { OrganizationPage } from "src/app/pages/organization/organization.page";
 
 export const environment = {
   production: false,
-  loginurl:'https://testnode.propelapps.com/EBS/20D/login',
-  Organizationurl:'https://testnode.propelapps.com/EBS/23A/getInventoryOrganizationsTable'
+  baseUrl:'https://testnode.propelapps.com/EBS/'
 };
 
 /*

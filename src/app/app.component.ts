@@ -7,6 +7,10 @@ import { Sqliteservice } from './services/sqlite/sqliteservice';
   templateUrl: 'app.component.html',
   imports: [IonApp, IonRouterOutlet],
 })
-export class AppComponent   {
+export class AppComponent  implements OnInit {
+  constructor(private sqlite:Sqliteservice){}
+async  ngOnInit() {
+await this.sqlite.createDatabase("loginDataBase");
+  }
 
 }

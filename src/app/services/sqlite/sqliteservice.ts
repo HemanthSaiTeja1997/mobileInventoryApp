@@ -12,9 +12,7 @@ export class Sqliteservice {
   private db: SQLiteDBConnection | null = null;
   private loginUsers = new BehaviorSubject<any>([]);
   loginusers$ = this.loginUsers.asObservable();
-  private userOrganization = new BehaviorSubject<any>([]);
-  userOrganizations$ = this.userOrganization.asObservable();
-  async createDatabaseWithTable(databaseName: string, tableName: string, metaData: Metadata[], primaryKey: string = '') {
+  async createDatabase(databaseName: string) {
     try {
       await this.sqlite.checkConnectionsConsistency();
       const isConnected = await this.sqlite.isConnection(databaseName, false);
@@ -25,18 +23,25 @@ export class Sqliteservice {
         this.db = await this.sqlite.createConnection(databaseName, false, "no-encryption", 1, false);
         await this.db.open();
       }
-      const columeNameWithType = metaData.map((data) => `${data.name} ${data.type}`).join(' ,');
-      const schema = `CREATE TABLE  IF NOT EXISTS ${tableName} (${columeNameWithType}${primaryKey});`
-      await this.db.execute(schema);
     } catch (err) {
       console.error("DB initialization error:", err);
     }
   }
+  async createTable(tableName: string, metaData: Metadata[], primaryKey: string = '') {
+    try {
+      const columeNameWithType = metaData.map((data) => `${data.name} ${data.type}`).join(' ,');
+      const schema = `CREATE TABLE  IF NOT EXISTS ${tableName} (${columeNameWithType}${primaryKey});`
+      await this.db?.execute(schema);
+    } catch (error) {
+      console.error("Error in Creating Table:", error);
 
-  async registerLoginUsers(tableName: string, data: Data[]): Promise<boolean> {
+    }
+
+  }
+
+  async registerLoginUsers(tableName: string, data: Data[]): Promise<void> {
     if (!this.db) {
       console.log("DB not connted");
-      return false
     };
     const columns = Object.keys(data[0]).join(', ');
     const valuesList = data.map(row => {
@@ -45,18 +50,18 @@ export class Sqliteservice {
         .join(", ");
       return `(${values})`;
     }).join(", ");
+    await this.db?.execute(`DELETE FROM ${tableName}`);
     const query = `INSERT INTO ${tableName} (${columns} ) VALUES ${valuesList}`;
     await this.db?.run(query);
     const users = await this.selectAllFromTable(tableName);
     this.loginUsers.next(users);
-    return true;
   }
-  async selectAllFromTable(tableName: string) {
+  async selectAllFromTable(tableName: string): Promise<any> {
     const result = await this.db?.query(`SELECT * FROM ${tableName}`);
     return result?.values || [];
   }
 
-  async createOrganizationTable(databaseName: string, tableName: string, csvData: any[][]) {
+  async createOrganizationTable(tableName: string, csvData: any[][]): Promise<void> {
     try {
       const columns = csvData[0];
       const rowValues = csvData.slice(1);
@@ -76,16 +81,13 @@ export class Sqliteservice {
 
       const primaryKeys = primaryKey.length > 0 ? ` , PRIMARY KEY (${primaryKey.join(' ,')})` : '';
 
-      await this.createDatabaseWithTable(databaseName, tableName, metaData, primaryKeys);
+      await this.createTable(tableName, metaData, primaryKeys);
       const valueString = rowValues
         .map(row => `(${row.map(() => '?').join(',')})`)
         .join(',');
       const flatValues = rowValues.reduce((acc, val) => acc.concat(val), []);
       const insertquery = `INSERT or Ignore INTO ${tableName} (${columnWithoutSuffix.join(',')} ) VALUES ${valueString}`;
       await this.db?.run(insertquery, flatValues);
-      const organizations = await this.selectAllFromTable(tableName);
-      this.userOrganization.next(organizations);
-
     } catch (error) {
       console.error("Error initializing table from CSV:", error);
 
