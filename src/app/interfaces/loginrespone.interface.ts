@@ -6,6 +6,9 @@ export interface loginRespone {
 export interface Metadata {
   name: string
   type: string
+  ebs?:string
+  cloud?:string
+  primarykey?:boolean
 }
 
 export interface Data {

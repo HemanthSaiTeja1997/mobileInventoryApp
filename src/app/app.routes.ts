@@ -15,8 +15,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/organization/organization.page').then( m => m.OrganizationPage)
   },
     {
+    path: 'activity',
+    loadComponent: () => import('./pages/activity/activity.page').then( m => m.ActivityPage)
+  },
+    {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
   },
+
 ];

@@ -48,36 +48,37 @@ export class LoginPage implements OnInit {
       return;
     }
     this.nprogress.progressBar("Loading...", 3000, "circular")
-    this.apiservice.apiRequest<loginRespone>(HttpMethod.POST, `${environment.baseUrl}${LOGIN_CONSTANTS.API_ENDPOINT}`, this.loginForm.value).subscribe({
+    this.apiservice.apiRequest<loginRespone>(HttpMethod.POST, LOGIN_CONSTANTS.LOGIN_API, this.loginForm.value).subscribe({
       next: async (data: loginRespone) => {
         this.nprogress.dismiss();
 
         if (data?.data[0]?.STATUS === '0') {
           await this.alertMessage.presentAlert(data?.data[0]?.ERROR);
         } else {
-          await this.sqlite.createTable(LOGIN_CONSTANTS.TABLE_NAME, data?.metadata);
           //create login tabel
-          await this.sqlite.registerLoginUsers(LOGIN_CONSTANTS.TABLE_NAME, data?.data);
-          this.sqlite.loginusers$.pipe(take(1)).subscribe({
-            next: (res) => {
-              this.loginActiveUsers = res.filter((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID != null && item.DEFAULT_ORG_ID !== "");
-              this.defaultOrgId = res.find((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID !== null && item.DEFAULT_ORG_ID !== "")?.DEFAULT_ORG_ID;
-              localStorage.setItem("orgId", String(this.defaultOrgId));
+          await this.sqlite.createTable(LOGIN_CONSTANTS.TABLE_NAME, data?.metadata);
+          //insert into login table
+          await this.sqlite.insertDataIntoTable(LOGIN_CONSTANTS.TABLE_NAME, data?.data);
+          this.loginActiveUsers = await this.sqlite.selectAllFromTable(LOGIN_CONSTANTS.TABLE_NAME);
+          this.loginActiveUsers = this.loginActiveUsers.filter((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID != null && item.DEFAULT_ORG_ID !== "");
+          this.defaultOrgId = this.loginActiveUsers.find((item: { DEFAULT_ORG_ID: string | null; }) => item.DEFAULT_ORG_ID !== null && item.DEFAULT_ORG_ID !== "")?.DEFAULT_ORG_ID;
+          localStorage.setItem("orgId", String(this.defaultOrgId));
 
-              this.responsibilities = [...new Set(
-                this.loginActiveUsers.map((user: { RESPONSIBILITY: string }) => user.RESPONSIBILITY)
-              )];
-              localStorage.setItem("responsibility", JSON.stringify(this.responsibilities));
-              console.log("responsibilityfromLocalStroage", localStorage.getItem('responsibility'));
-              console.log("loginUsers", this.defaultOrgId);
-            }
-          });
+
+          this.responsibilities = [...new Set(
+            this.loginActiveUsers.map((user: { RESPONSIBILITY: string }) => user.RESPONSIBILITY)
+          )];
+          localStorage.setItem("responsibility", JSON.stringify(this.responsibilities));
+          console.log("responsibilityfromLocalStroage", localStorage.getItem('responsibility'));
+          console.log("loginUsers", this.defaultOrgId);
+
           // create organization tabel
-          this.apiservice.apiRequest(HttpMethod.GET, `${environment.baseUrl}${ORGANIZATION_CONSTANTS.API_ENDPOINT}/${this.defaultOrgId}`).pipe(take(1)).subscribe({
+          this.apiservice.apiRequest(HttpMethod.GET, `${ORGANIZATION_CONSTANTS.ORGANIZATION_API}/${this.defaultOrgId}`
+          ).pipe(take(1)).subscribe({
             next: async (res) => {
               const respones = res as any[][];
               if (respones && Array.isArray(respones) && respones.length > 0 && typeof respones[0] === 'object') {
-                await this.sqlite.createOrganizationTable(ORGANIZATION_CONSTANTS.TABLE_NAME, respones);
+                await this.sqlite.createCSVTypeTable(ORGANIZATION_CONSTANTS.TABLE_NAME, respones);
               }
             }
           })
