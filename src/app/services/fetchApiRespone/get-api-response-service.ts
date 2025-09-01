@@ -44,14 +44,14 @@ export class GetApiResponseService {
           });
 
         } else {
-          //  metadata
+          //for  metadata
           const metaDataRes = await firstValueFrom(this.apiService.apiRequest(httpType, metaDataurl));
           const metaData = metaDataRes as Metadata[];
 
           // Create table using metadata
           await this.sqlite.createTable(tableName, metaData);
 
-          // Fetch main data and insert into DB
+          // Fetch main data and insert into tabel
           this.apiService.apiRequest(httpType, apiUrl).subscribe({
             next: async (data: any) => {
               try {

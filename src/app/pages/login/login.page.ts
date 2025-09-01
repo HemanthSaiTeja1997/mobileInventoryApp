@@ -14,6 +14,7 @@ import { NavController } from '@ionic/angular';
 import { Progressbar } from 'src/app/services/progressbar/progressbar';
 import { BehaviorSubject, take } from 'rxjs';
 import { HttpMethod, LOGIN_CONSTANTS, LOGIN_MESSAGES, ORGANIZATION_CONSTANTS, ROUTES, ToastColor, ToastPosition } from 'src/app/utils/constants';
+import { ApiList } from 'src/app/services/apiList/api-list';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,7 @@ export class LoginPage implements OnInit {
   defaultOrgId!: number;
   responsibilities: any[] = [];
 
-  constructor(private fb: FormBuilder, private navCltr: NavController, private nprogress: Progressbar, private sqlite: Sqliteservice, private apiservice: Apiservice, private toastService: Toastservice, private alertMessage: Alertservice) {
+  constructor(private fb: FormBuilder,private apil:ApiList, private navCltr: NavController, private nprogress: Progressbar, private sqlite: Sqliteservice, private apiservice: Apiservice, private toastService: Toastservice, private alertMessage: Alertservice) {
     this.loginForm = this.fb.group({
       username: ['Manideep J', Validators.required],
       password: ['Propel@123', Validators.required]
@@ -40,6 +41,8 @@ export class LoginPage implements OnInit {
   }
 
   ngOnInit() {
+         this.apil.getTableData();
+
   }
   login() {
     if (this.loginForm.invalid) {
@@ -70,7 +73,8 @@ export class LoginPage implements OnInit {
           )];
           localStorage.setItem("responsibility", JSON.stringify(this.responsibilities));
           console.log("responsibilityfromLocalStroage", localStorage.getItem('responsibility'));
-          console.log("loginUsers", this.defaultOrgId);
+          // console.log("loginUsers", this.defaultOrgId);
+
 
           // create organization tabel
           this.apiservice.apiRequest(HttpMethod.GET, `${ORGANIZATION_CONSTANTS.ORGANIZATION_API}/${this.defaultOrgId}`

@@ -19,7 +19,7 @@ import { addIcons } from 'ionicons';
   templateUrl: './activity.page.html',
   styleUrls: ['./activity.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle,IonIcon, IonToolbar,IonSpinner, CommonModule, FormsModule]
+  imports: [IonContent,IonIcon, CommonModule, FormsModule]
 })
 
 export class ActivityPage implements OnInit {
@@ -41,8 +41,7 @@ async  ngOnInit() {
     ];
   await  this.callAllApis(this.listOfApiToCall);
   this.fetchAllTables();
-  // this.getItemsdata=await this.sqlite.selectAllFromTable('Items');
-  // console.log("items>>>",this.getItemsdata);
+
   
 
 
@@ -98,7 +97,7 @@ console.log("ress...",res);
       // remove loading animation after delay
       setTimeout(() => {
         this.loadingMap[tableName] = false;
-      }, 5000); // 1.5 seconds
+      }, 2000); // 1.5 seconds
     }
   });
 

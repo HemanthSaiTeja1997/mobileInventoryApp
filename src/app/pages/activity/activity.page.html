@@ -5,26 +5,21 @@
     [ngClass]="{ 'slide-in': loadingMap[result.tableName], 'loaded': !loadingMap[result.tableName] }"
   >
     <div class="card-body row-layout">
-     
-
-      <div class="content">
-         <ion-icon
-        name="checkmark-circle"
-        [color]="
-          loadingMap[result.tableName]
-            ? 'warning'
-            : result.apiStatus === 'success'
-              ? 'success'
-              : 'danger'
-        "
-        class="status-icon"
-      >
-           <p class="card-text">
+      <div class="content horizontal-align">
+        <ion-icon
+          name="checkmark-circle"
+          [color]="
+            loadingMap[result.tableName]
+              ? 'warning'
+              : result.Status === 200
+                ? 'success'
+                : 'danger'
+          "
+          class="status-icon"
+        ></ion-icon>
+        <p class="card-text">
           {{ loadingMap[result.tableName] ? 'Processing...' : result.message }}
         </p>
-    </ion-icon>
-        <!-- <h5 class="card-title">{{ result.tableName }}</h5> -->
-   
       </div>
     </div>
   </div>
