@@ -26,5 +26,6 @@ export interface Docs4ReceivingType {
   PoType: string;
   Requestor: string;
   VendorName: string;
+  LastUpdateDate:string;
   items: number;
 }

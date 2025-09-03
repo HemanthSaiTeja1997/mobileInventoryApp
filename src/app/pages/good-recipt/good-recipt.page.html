@@ -1,38 +1,16 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-      <ion-icon name="chevron-back-outline" slot="start" [routerLink]="['/dashboard']"></ion-icon>
+    <ion-icon
+      name="chevron-back-outline"
+      size="large"
+      slot="start"
+      [routerLink]="['/dashboard']"
+    ></ion-icon>
     <ion-title>Docs 2 Recieve</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-icon name="chevron-back-outline"></ion-icon>
-    </ion-toolbar>
-  </ion-header>
-  <ion-card class="po-card" *ngFor="let po of doc4Receiving">
-  <ion-card-content>
-    <ion-grid>
-      <ion-row class="top-row" align-items-center>
-        <ion-col size="3">
-          <div class="po-number">{{ po.PoNumber }}</div>
-        </ion-col>
-        <ion-col size="7">
-          <div class="po-type">{{ po.PoType }}</div>
-          <div class="vendor-name">{{ po.VendorName }}</div>
-        </ion-col>
-        <ion-col size="2" class="items-count">
-          <div class="count">{{ po.items }}</div>
-          <div class="label">{{ po.items > 1 ? 'Items' : 'Item' }}</div>
-        </ion-col>
-      </ion-row>
-      <ion-row class="bottom-row">
-        <ion-col size="3" class="date">26-Aug-25</ion-col>
-        <ion-col size="6" class="requestor" text-right>{{ po.Requestor }}</ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card-content>
-</ion-card>
-
+  <app-common-card *ngFor="let po of doc4Receiving" [po]="po" (cardClick)="navigateToOrder($event)"></app-common-card>
+ 
 </ion-content>

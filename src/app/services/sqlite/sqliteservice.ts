@@ -112,14 +112,16 @@ export class Sqliteservice {
   PoType,
   Requestor,
   VendorName,
+  MAX(LastUpdateDate) AS LastUpdateDate,
   COUNT(*) AS items
 FROM ${tableName}
 GROUP BY 
-  PoNumber,
-  PoType,
-  Requestor,
-  VendorName;
+  PoNumber
 `);
+    return result?.values || [];
+  }
+  async getPurchaseOrder(poNumber: number): Promise<any> {
+    const result = await this.db?.query(`SELECT * FROM DocumentsForReceiving WHERE PoNumber = ${poNumber}`);
     return result?.values || [];
   }
 

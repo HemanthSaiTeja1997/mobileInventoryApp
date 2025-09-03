@@ -27,10 +27,20 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/good-recipt/good-recipt.page').then( m => m.GoodReciptPage)
   },
     {
+    path: 'order',
+    loadComponent: () => import('./pages/order/order.page').then( m => m.OrderPage)
+  },
+    {
+    path: 'purchaseorder',
+    loadComponent: () => import('./pages/purchaseorder/purchaseorder.page').then( m => m.PurchaseorderPage)
+  },
+    {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
   },
+
+
 
 
 

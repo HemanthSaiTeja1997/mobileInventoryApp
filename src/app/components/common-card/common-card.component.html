@@ -1,0 +1,25 @@
+ <ion-card class="po-card" >
+    <ion-card-content>
+      <ion-grid (click)="onCardClick()">
+        <ion-row class="top-row" align-items-center>
+          <ion-col size="3">
+            <div class="po-number">{{ po.PoNumber }}</div>
+          </ion-col>
+          <ion-col size="7">
+            <div class="po-type">{{ po.PoType }}</div>
+            <div class="vendor-name">{{ po.VendorName }}</div>
+          </ion-col>
+          <ion-col size="2" class="items-count">
+            <div class="count">{{ po.items }}</div>
+            <div class="label">{{ po.items > 1 ? 'Items' : 'Item' }}</div>
+          </ion-col>
+        </ion-row>
+        <ion-row class="bottom-row">
+          <ion-col size="3" class="date">{{po.LastUpdateDate | shortDateFormater }}</ion-col>
+          <ion-col size="6" class="requestor" text-right
+            >{{ po.Requestor }}</ion-col
+          >
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>

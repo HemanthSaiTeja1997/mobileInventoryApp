@@ -1,0 +1,26 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+      <ion-icon name="chevron-back-outline" size="large" slot="start" [routerLink]="['/good-recipt']"></ion-icon>
+    <ion-title>order</ion-title>
+  </ion-toolbar>
+  <app-common-card [po]="podata"></app-common-card>
+</ion-header>
+<ion-content [fullscreen]="true">
+<ion-card class="item-card" *ngFor="let item of orderToBeReceived; index as i">
+  <ion-card-content>
+    <div class="top-row">
+      <strong>{{ i + 1 }}. {{ item.ItemNumber }}</strong>
+      <ion-icon name="chevron-forward-outline" slot="end" (click)="navigateToPurchaseOrder(item)"></ion-icon>
+    </div>
+    <div class="item-description">
+      {{ item.ItemDesc }}
+    </div>
+    <div class="item-detail">Shipment#: {{ item.PoShipmentNumber }}</div>
+    <div class="item-detail">Delivery Date: {{ item.NeedByDate }}</div>
+    <div class="item-detail">
+      Ordered Quantity: {{ item.QtyOrdered }} {{ item.ItemUom }}
+    </div>
+  </ion-card-content>
+</ion-card>
+
+</ion-content>

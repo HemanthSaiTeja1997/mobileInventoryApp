@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [RouterModule, IonContent, IonCard, IonRow, IonHeader, IonMenu, IonMenuButton, IonList, IonIcon, IonGrid, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCol]
+  imports: [RouterModule, IonContent, IonCard, IonRow, IonHeader, IonMenu, IonMenuButton, IonList, IonIcon, IonGrid, IonTitle, IonToolbar, CommonModule, FormsModule, IonButtons, IonButton, IonCardContent, IonCardHeader, IonCol]
 })
 export class DashboardPage implements OnInit {
 
