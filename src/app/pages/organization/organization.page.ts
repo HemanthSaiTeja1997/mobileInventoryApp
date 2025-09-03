@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonSearchbar, IonHeader,IonRefresher,
-  IonRefresherContent,RefresherCustomEvent, IonTitle, IonToolbar, IonLabel, IonCheckbox, IonList, IonItem, IonButton } from '@ionic/angular/standalone';
+import {
+  IonContent, IonSearchbar, IonHeader, IonRefresher,
+  IonRefresherContent, RefresherCustomEvent, IonTitle, IonToolbar, IonLabel, IonCheckbox, IonList, IonItem, IonButton
+} from '@ionic/angular/standalone';
 import { Sqliteservice } from 'src/app/services/sqlite/sqliteservice';
 import { Organization } from 'src/app/interfaces/loginrespone.interface';
 import { OrgsearchPipe } from 'src/app/pipes/orgsearch-pipe';
@@ -15,7 +17,7 @@ import { NavController } from '@ionic/angular';
   templateUrl: './organization.page.html',
   styleUrls: ['./organization.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle,IonRefresher, IonRefresherContent, IonToolbar, CommonModule, FormsModule, IonSearchbar, CommonModule, IonLabel, FormsModule, IonCheckbox, IonList, IonItem, OrgsearchPipe, IonButton]
+  imports: [IonContent, IonHeader, IonTitle, IonRefresher, IonRefresherContent, IonToolbar, CommonModule, FormsModule, IonSearchbar, CommonModule, IonLabel, FormsModule, IonCheckbox, IonList, IonItem, OrgsearchPipe, IonButton]
 })
 export class OrganizationPage implements OnInit {
   searchOrganization: string = '';
@@ -32,9 +34,9 @@ export class OrganizationPage implements OnInit {
     console.log("selected>>>", this.selectedOrgCode);
 
   }
-  submitSelection() {
+  submitSelection(): void {
     if (this.selectedOrgCode) {
-      localStorage.setItem("InventoryOrgId",this.selectedOrgCode);
+      localStorage.setItem("InventoryOrgId", this.selectedOrgCode);
       console.log("Selected Organization Code:", localStorage.getItem("InventoryOrgId"));
       this.navCltr.navigateForward('activity')
     } else {
@@ -42,10 +44,10 @@ export class OrganizationPage implements OnInit {
     }
   }
 
-  handleRefresh(event: RefresherCustomEvent) {
-    setTimeout(async() => {
-          this.activeOrganizations = await this.sqlservice.selectAllFromTable(ORGANIZATION_CONSTANTS.TABLE_NAME);
-    console.log("activeORG", this.activeOrganizations);
+  handleRefresh(event: RefresherCustomEvent): void {
+    setTimeout(async () => {
+      this.activeOrganizations = await this.sqlservice.selectAllFromTable(ORGANIZATION_CONSTANTS.TABLE_NAME);
+      console.log("activeORG", this.activeOrganizations);
       event.target.complete();
     }, 2000);
   }

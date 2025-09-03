@@ -1,0 +1,58 @@
+ion-title{
+    text-align: center;
+}
+
+.po-card {
+  border-radius: 16px;
+  margin-bottom: 12px;
+      box-sizing: border-box;
+}
+
+.po-number {
+  background-color: #007bff;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.po-type {
+  font-weight:500;
+  font-size: large;
+}
+
+.vendor-name {
+  font-size: medium;
+  color: #666;
+}
+
+.items-count .count {
+  font-size: xx-large;
+  text-align: right;
+  color: #060606;
+  margin-right: 10px;
+  margin-top: -10px;
+
+
+}
+
+.items-count .label {
+  font-size: large;
+  text-align: right;
+  color: #060606;
+  margin-top: -10px;
+
+}
+
+.bottom-row {
+  border-top: 1px solid #eee;
+  margin-bottom: -16px;
+  padding: 0;
+}
+
+.date, .requestor {
+  font-size: large;
+  color: #444;
+}

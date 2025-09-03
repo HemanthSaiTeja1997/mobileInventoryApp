@@ -19,9 +19,19 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/activity/activity.page').then( m => m.ActivityPage)
   },
     {
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard.page').then( m => m.DashboardPage)
+  },
+    {
+    path: 'good-recipt',
+    loadComponent: () => import('./pages/good-recipt/good-recipt.page').then( m => m.GoodReciptPage)
+  },
+    {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
   },
+
+
 
 ];

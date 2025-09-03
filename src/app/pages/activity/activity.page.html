@@ -24,3 +24,4 @@
     </div>
   </div>
 </ion-content>
+<ion-button *ngIf="failedApis && failedApis.length > 0" (click)="syncData()">Sync</ion-button>

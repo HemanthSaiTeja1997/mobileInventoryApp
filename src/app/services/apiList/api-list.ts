@@ -6,8 +6,7 @@ import { ApiStatus, ApiType, HttpMethod, EBS_API, EBS_API_METADATA, } from 'src/
   providedIn: 'root'
 })
 export class ApiList {
-   responsibility= localStorage.getItem('responsibility');
-  apisBasedOnResponsibility:ApiListType[] =[];
+  apisBasedOnResponsibility: ApiListType[] = [];
   apiList = [
     {
       apiName: 'getItems',
@@ -226,7 +225,7 @@ export class ApiList {
       message: 'InventoryPeriods Table Downloaded Successful',
       httpType: HttpMethod.GET
     },
-      {
+    {
       apiName: 'getSerialTableType',
       apiUrl: EBS_API.GET_SERIAL_TABLE,
       tableName: 'SerialTable',
@@ -264,42 +263,32 @@ export class ApiList {
     },
   ]
 
-  getTableData(): string[] {    
+  getTableData(): string[] {
     return this.apiList.map(e => e.tableName);
   }
 
-private  responsibilityApi :{[key :string] : string[]}={
-  "GOODS RECEIPTS": [
-    'getItems',
-    'getSerialTableType',
-    'getSubinventories',
-    'getLocatorsTable',
-    'getGLPeriods',
-    'getInventoryPeriods',
-    'getDocumentsForReceiving',
-    'getLotsTableType'
-  ],
-  "PO INVENTORY": [
-    'getPOHeaders',
-    'getPODetails',
-    'getVendors'
-  ],
-  "SUB-INVENTORY": [
-    'getSubinventories',
-    'getLocatorsTable'
-  ]
-};
+  private responsibilityApi: { [key: string]: string[] } = {
+    "GOODS RECEIPTS": [
+      'getItems',
+      'getSerialTableType',
+      'getSubinventories',
+      'getLocatorsTable',
+      'getGLPeriods',
+      'getInventoryPeriods',
+      'getDocumentsForReceiving',
+      'getLotsTableType'
+    ]
+  };
 
-getListOfApisBasedOnResponsibility(responsibility: string) {
-  const responsibilityName = Object.keys(this.responsibilityApi).find(respone=>responsibility.includes(respone));
-  if(responsibilityName){
-    const allowedApiNames = this.responsibilityApi[responsibilityName];
-    this.apisBasedOnResponsibility= this.apiList.filter(api=>allowedApiNames.includes(api.apiName));
-
+  getListOfApisBasedOnResponsibility(responsibility: string) :ApiListType[] {
+    const responsibilityName = Object.keys(this.responsibilityApi).find(respone => responsibility.includes(respone));
+    if (responsibilityName) {
+      const allowedApiNames = this.responsibilityApi[responsibilityName];
+      return this.apiList.filter(api => allowedApiNames.includes(api.apiName));
+    }
+    else {
+     return []
+    }
   }
-  else{
-this.apisBasedOnResponsibility = [];
-  }
-}
 
 }

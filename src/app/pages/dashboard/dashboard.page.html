@@ -1,0 +1,44 @@
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>DashBoard</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <ion-list>
+        <ion-button>
+        <ion-icon name="home" slot="start"></ion-icon>
+          Home</ion-button>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>DashBoard</ion-title>
+    </ion-toolbar>
+  </ion-header>
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="dashboard-card" (click)="navigateToDoc4Receving()">
+          <ion-card-header>
+            <div class="card-title">Goods Receipt</div>
+            <div class="card-subtitle">144 Open Docs</div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="circle">0%</div>
+            <div class="completed-text">0 Completed</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      
+    </ion-row>
+  </ion-grid>
+</ion-content>
+</div>

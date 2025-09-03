@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Apiservice } from '../apiservice/apiservice';
 import { ApiListType, ResponseApiType } from 'src/app/interfaces/getApiResponse';
 import { ApiList } from '../apiList/api-list';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { firstValueFrom, take } from 'rxjs';
 import { Sqliteservice } from '../sqlite/sqliteservice';
 import { Metadata } from 'src/app/interfaces/loginrespone.interface';
@@ -23,6 +23,7 @@ export class GetApiResponseService {
         apiUrl,
         IsCSV,
         metaDataurl,
+        apiType,
         httpType,
         responseKey
       } = apiData;
@@ -30,38 +31,38 @@ export class GetApiResponseService {
       try {
         if (IsCSV) {
           const response = await firstValueFrom(this.apiService.apiRequest(httpType, apiUrl));
-          const csvData = response as any[][];
-
+          const csvData = response.body;
           if (csvData && Array.isArray(csvData) && csvData.length > 0 && typeof csvData[0] === 'object') {
             await this.sqlite.createCSVTypeTable(tableName, csvData);
           }
-
           resolve({
             tableName,
-            Status: 200,
+            Status: response.status,
             apiStatus: ApiStatus.SUCCESS,
-            message: `${tableName}  fetched and stored successfully`
+            message: `${tableName}  fetched and stored successfully`,
+            apiType
           });
 
         } else {
           //for  metadata
           const metaDataRes = await firstValueFrom(this.apiService.apiRequest(httpType, metaDataurl));
-          const metaData = metaDataRes as Metadata[];
+          const metaData = metaDataRes.body as Metadata[];
 
           // Create table using metadata
           await this.sqlite.createTable(tableName, metaData);
 
-          // Fetch main data and insert into tabel
+          // Fetch row values and insert into tabel
           this.apiService.apiRequest(httpType, apiUrl).subscribe({
             next: async (data: any) => {
               try {
-                await this.sqlite.insertDataIntoTable(tableName, data?.[responseKey]);
+                await this.sqlite.insertDataIntoTable(tableName, data?.body?.[responseKey]);
 
                 resolve({
                   tableName,
-                  Status: 200,
+                  Status: data.status,
                   apiStatus: ApiStatus.SUCCESS,
-                  message: `${tableName} fetched and stored successfully`
+                  message: `${tableName} fetched and stored successfully`,
+                  apiType
                 });
               } catch (dbError) {
                 console.error(`DB Insert error for ${apiName}`, dbError);
@@ -69,8 +70,8 @@ export class GetApiResponseService {
                   tableName,
                   Status: 500,
                   apiStatus: ApiStatus.FAILED,
-
-                  message: `DB insert failed for ${tableName}: ${dbError}`
+                  message: `DB insert failed for ${tableName}: ${dbError}`,
+                  apiType
                 });
               }
             },
@@ -80,7 +81,8 @@ export class GetApiResponseService {
                 tableName,
                 Status: 500,
                 apiStatus: ApiStatus.FAILED,
-                message: `Failed to fetch data for ${tableName}: ${apiError}`
+                message: `Failed to fetch data for ${tableName}: ${apiError}`,
+                apiType
               });
             }
           });
@@ -92,7 +94,9 @@ export class GetApiResponseService {
         reject({
           tableName,
           Status: 500,
-          message: `Failed to fetch/store ${tableName}: ${error}`
+          apiStatus: ApiStatus.FAILED,
+          message: `Failed to fetch/store ${tableName}: ${error}`,
+          apiType
         });
       }
     });
